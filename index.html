@@ -49,4 +49,129 @@
             background: #ccc;
             color: white;
             border-radius: 50%;
-            width:
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+            font-size: 12px;
+            user-select: none;
+        }
+
+        .item { 
+            display: none; 
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            text-align: left;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+        .item:hover { transform: translateY(-2px); border-color: #ddd; }
+        
+        .info-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .name { font-weight: 600; color: #333; font-size: 1.05em; }
+        .price { font-weight: bold; color: var(--primary); font-size: 1.1em; }
+        
+        .wa-btn {
+            background-color: var(--wa-green);
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        .wa-btn:hover { background-color: #1eb954; }
+        
+        .show { display: flex !important; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Aaliya Perfume Price Finder</h2>
+    
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Enter perfume name..." onkeyup="filter()">
+        <span class="clear-btn" id="clearBtn" onclick="clearSearch()">&times;</span>
+    </div>
+    
+    <div id="list">Fetching live prices...</div>
+</div>
+
+<script>
+    const yourWhatsAppNumber = "919722999223"; 
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTzSeE0tPryPKE8gOSPKUhSxupwT-v85JTQLklrg8dXAAcQ4qbAW_iCV7Krjgs5LoH0QKP3qyqIsgj-/pub?output=csv';
+
+    let perfumeData = [];
+
+    // 1. Fetch data from Google Sheets
+    fetch(sheetUrl)
+        .then(res => res.text())
+        .then(csvText => {
+            const rows = csvText.split('\n').slice(1);
+            const listDiv = document.getElementById('list');
+            listDiv.innerHTML = ''; 
+
+            rows.forEach(row => {
+                const cols = row.split(',');
+                if (cols.length >= 2) {
+                    const name = cols[0].trim();
+                    const price = cols[1].trim();
+                    
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+                    
+                    const message = encodeURIComponent(`Hi, is ${name} (₹${price}) available at Aaliya Perfume?`);
+                    const waLink = `https://wa.me/${yourWhatsAppNumber}?text=${message}`;
+
+                    itemDiv.innerHTML = `
+                        <div class="info-row">
+                            <span class="name">${name}</span>
+                            <span class="price">₹${price}</span>
+                        </div>
+                        <a href="${waLink}" class="wa-btn" target="_blank">Order on WhatsApp</a>
+                    `;
+                    listDiv.appendChild(itemDiv);
+                }
+            });
+        });
+
+    // 2. Filter logic (Shows only when typing)
+    function filter() {
+        let input = document.getElementById('search').value.toLowerCase().trim();
+        let items = document.getElementsByClassName('item');
+        let clearBtn = document.getElementById('clearBtn');
+
+        // Show/Hide Clear Button
+        clearBtn.style.display = (input.length > 0) ? "block" : "none";
+        
+        for (let i = 0; i < items.length; i++) {
+            let text = items[i].innerText.toLowerCase();
+            if (input !== "" && text.includes(input)) {
+                items[i].classList.add('show');
+            } else {
+                items[i].classList.remove('show');
+            }
+        }
+    }
+
+    // 3. Clear Search Function
+    function clearSearch() {
+        document.getElementById('search').value = "";
+        filter();
+        document.getElementById('search').focus();
+    }
+</script>
+
+</body>
+</html>

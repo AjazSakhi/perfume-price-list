@@ -1,19 +1,15 @@
-HTML
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfume Price List</title>
+    <title>Perfume Price Finder</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; text-align: center; }
         .box { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; }
         #search { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        .item { display: none; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
         .price { font-weight: bold; color: #27ae60; }
-        
-        /* This rule ensures items stay hidden */
-        .hidden { display: none !important; }
+        .show { display: flex !important; }
     </style>
 </head>
 <body>
@@ -21,34 +17,46 @@ HTML
 <div class="box">
     <h2>Perfume Price Finder</h2>
     <input type="text" id="search" placeholder="Enter perfume name..." onkeyup="filter()">
-    
-    <div id="list">
-        <div class="item hidden"><span>9PM Afnan</span> <span class="price">₹2,500</span></div>
-        <div class="item hidden"><span>Hawas Rasasi</span> <span class="price">₹3,800</span></div>
-        <div class="item hidden"><span>Lattafa Asad</span> <span class="price">₹1,800</span></div>
-        <div class="item hidden"><span>Khamrah Lattafa</span> <span class="price">₹2,200</span></div>
-        <div class="item hidden"><span>Club de Nuit</span> <span class="price">₹3,200</span></div>
-        <div class="item hidden"><span>OUD AND ROSE</span> <span class="price">₹2,999</span></div>
-        <div class="item hidden"><span>Hawas Rasasi</span> <span class="price">₹3,800</span></div>
-        <div class="item hidden"><span>Lattafa Asad</span> <span class="price">₹1,800</span></div>
-        <div class="item hidden"><span>Khamrah Lattafa</span> <span class="price">₹2,200</span></div>
-        <div class="item hidden"><span>Club de Nuit</span> <span class="price">₹3,200</span></div>
-    </div>
+    <div id="list">Loading prices...</div>
 </div>
 
 <script>
+    let perfumeData = [];
+    // PASTE YOUR GOOGLE SHEETS CSV LINK BELOW
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTzSeE0tPryPKE8gOSPKUhSxupwT-v85JTQLklrg8dXAAcQ4qbAW_iCV7Krjgs5LoH0QKP3qyqIsgj-/pub?output=csv'; 
+
+    // Fetch data from Google Sheets
+    fetch(sheetUrl)
+        .then(response => response.text())
+        .then(data => {
+            const rows = data.split('\n').slice(1); // Skip the header row
+            const listDiv = document.getElementById('list');
+            listDiv.innerHTML = ''; // Clear "Loading" message
+
+            rows.forEach(row => {
+                const cols = row.split(',');
+                if (cols.length >= 2) {
+                    const name = cols[0].trim();
+                    const price = cols[1].trim();
+                    
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+                    itemDiv.innerHTML = `<span>${name}</span> <span class="price">₹${price}</span>`;
+                    listDiv.appendChild(itemDiv);
+                }
+            });
+        });
+
     function filter() {
         let input = document.getElementById('search').value.toLowerCase().trim();
         let items = document.getElementsByClassName('item');
         
         for (let i = 0; i < items.length; i++) {
             let text = items[i].innerText.toLowerCase();
-            
-            // Show item ONLY if input is not empty AND text matches
             if (input !== "" && text.includes(input)) {
-                items[i].classList.remove('hidden');
+                items[i].classList.add('show');
             } else {
-                items[i].classList.add('hidden');
+                items[i].classList.remove('show');
             }
         }
     }

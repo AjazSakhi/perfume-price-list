@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +11,9 @@
         #search { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
         .item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
         .price { font-weight: bold; color: #27ae60; }
-        .hidden { display: none; }
+        
+        /* This rule ensures items stay hidden */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -20,26 +23,33 @@
     <input type="text" id="search" placeholder="Enter perfume name..." onkeyup="filter()">
     
     <div id="list">
-        <div class="item"><span>9PM Afnan</span> <span class="price">₹2,500</span></div>
-        <div class="item"><span>Hawas Rasasi</span> <span class="price">₹3,800</span></div>
-        <div class="item"><span>Lattafa Asad</span> <span class="price">₹1,800</span></div>
-        <div class="item"><span>Khamrah Lattafa</span> <span class="price">₹2,200</span></div>
-        <div class="item"><span>Club de Nuit</span> <span class="price">₹3,200</span></div>
-        <div class="item"><span>OUD AND ROSE</span> <span class="price">₹2,999</span></div>
-        <div class="item"><span>Hawas Rasasi</span> <span class="price">₹3,800</span></div>
-        <div class="item"><span>Lattafa Asad</span> <span class="price">₹1,800</span></div>
-        <div class="item"><span>Khamrah Lattafa</span> <span class="price">₹2,200</span></div>
-        <div class="item"><span>Club de Nuit</span> <span class="price">₹3,200</span></div>
+        <div class="item hidden"><span>9PM Afnan</span> <span class="price">₹2,500</span></div>
+        <div class="item hidden"><span>Hawas Rasasi</span> <span class="price">₹3,800</span></div>
+        <div class="item hidden"><span>Lattafa Asad</span> <span class="price">₹1,800</span></div>
+        <div class="item hidden"><span>Khamrah Lattafa</span> <span class="price">₹2,200</span></div>
+        <div class="item hidden"><span>Club de Nuit</span> <span class="price">₹3,200</span></div>
+        <div class="item hidden"><span>OUD AND ROSE</span> <span class="price">₹2,999</span></div>
+        <div class="item hidden"><span>Hawas Rasasi</span> <span class="price">₹3,800</span></div>
+        <div class="item hidden"><span>Lattafa Asad</span> <span class="price">₹1,800</span></div>
+        <div class="item hidden"><span>Khamrah Lattafa</span> <span class="price">₹2,200</span></div>
+        <div class="item hidden"><span>Club de Nuit</span> <span class="price">₹3,200</span></div>
     </div>
 </div>
 
 <script>
     function filter() {
-        let input = document.getElementById('search').value.toLowerCase();
+        let input = document.getElementById('search').value.toLowerCase().trim();
         let items = document.getElementsByClassName('item');
+        
         for (let i = 0; i < items.length; i++) {
             let text = items[i].innerText.toLowerCase();
-            items[i].classList.toggle('hidden', !text.includes(input));
+            
+            // Show item ONLY if input is not empty AND text matches
+            if (input !== "" && text.includes(input)) {
+                items[i].classList.remove('hidden');
+            } else {
+                items[i].classList.add('hidden');
+            }
         }
     }
 </script>

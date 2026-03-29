@@ -2,108 +2,51 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfume Price Finder</title>
+    <title>Aaliya Perfume Price Finder</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
-        .box { max-width: 450px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #1a1a1a; margin-bottom: 20px; }
-        #search { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; outline: none; transition: 0.3s; }
-        #search:focus { border-color: #27ae60; }
-        
-        .item { 
-            display: none; 
-            background: #fff;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            text-align: left;
-            flex-direction: column;
-            gap: 8px;
+        :root { 
+            --primary: #27ae60; 
+            --wa-green: #25D366; 
+            --bg: #f0f2f5; 
         }
-        
-        .info-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .name { font-weight: 600; color: #333; }
-        .price { font-weight: bold; color: #27ae60; font-size: 1.1em; }
-        
-        .wa-btn {
-            background-color: #25D366;
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            padding: 20px; 
+            margin: 0;
+        }
+        .box { 
+            max-width: 450px; 
+            margin: 20px auto; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+        h2 { color: #1a1a1a; margin-top: 0; margin-bottom: 20px; text-align: center; }
+
+        /* Search Container to hold the input and the Clear (X) button */
+        .search-container { position: relative; width: 100%; margin-bottom: 20px; }
+
+        #search { 
+            width: 100%; 
+            padding: 15px 45px 15px 15px; /* Extra padding on right for the X button */
+            border: 2px solid #eee; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            outline: none; 
+            transition: 0.3s;
+            box-sizing: border-box; /* FIX: Prevents going outside on the right */
+        }
+        #search:focus { border-color: var(--primary); }
+
+        /* The "X" Clear Button */
+        .clear-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ccc;
             color: white;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            display: inline-block;
-            text-align: center;
-        }
-        
-        .show { display: flex !important; }
-    </style>
-</head>
-<body>
-
-<div class="box">
-    <h2>Aaliya Perfume Price Finder</h2>
-    <input type="text" id="search" placeholder="Enter perfume name..." onkeyup="filter()">
-    <div id="list">Checking prices...</div>
-</div>
-
-<script>
-    const yourWhatsAppNumber = "919722999223"; // REPLACE with your 12-digit number (e.g., 91 followed by your 10 digits)
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTzSeE0tPryPKE8gOSPKUhSxupwT-v85JTQLklrg8dXAAcQ4qbAW_iCV7Krjgs5LoH0QKP3qyqIsgj-/pub?output=csv'; // PASTE your CSV link here
-
-    let perfumeData = [];
-
-    // 1. Fetch data from Google Sheets
-    fetch(sheetUrl)
-        .then(res => res.text())
-        .then(csvText => {
-            const rows = csvText.split('\n').slice(1);
-            const listDiv = document.getElementById('list');
-            listDiv.innerHTML = ''; 
-
-            rows.forEach(row => {
-                const cols = row.split(',');
-                if (cols.length >= 2) {
-                    const name = cols[0].trim();
-                    const price = cols[1].trim();
-                    
-                    // Create the HTML for each item
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'item';
-                    
-                    // WhatsApp message text: "Hi, I want to order [Perfume Name] for ₹[Price]"
-                    const message = encodeURIComponent(`Hi, I found this on your Price Finder: ${name} for ₹${price}. Is it available?`);
-                    const waLink = `https://wa.me/${yourWhatsAppNumber}?text=${message}`;
-
-                    itemDiv.innerHTML = `
-                        <div class="info-row">
-                            <span class="name">${name}</span>
-                            <span class="price">₹${price}</span>
-                        </div>
-                        <a href="${waLink}" class="wa-btn" target="_blank">Order on WhatsApp</a>
-                    `;
-                    listDiv.appendChild(itemDiv);
-                }
-            });
-        });
-
-    // 2. Filter logic (Shows only when typing)
-    function filter() {
-        let input = document.getElementById('search').value.toLowerCase().trim();
-        let items = document.getElementsByClassName('item');
-        
-        for (let i = 0; i < items.length; i++) {
-            let text = items[i].innerText.toLowerCase();
-            if (input !== "" && text.includes(input)) {
-                items[i].classList.add('show');
-            } else {
-                items[i].classList.remove('show');
-            }
-        }
-    }
-</script>
-
-</body>
-</html>
+            border-radius: 50%;
+            width:

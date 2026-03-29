@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HQKVD4TWJC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-HQKVD4TWJC');
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aaliya Perfume Price Finder</title>
     <style>
@@ -25,22 +34,20 @@
         }
         h2 { color: #1a1a1a; margin-top: 0; margin-bottom: 20px; text-align: center; }
 
-        /* Search Container to hold the input and the Clear (X) button */
         .search-container { position: relative; width: 100%; margin-bottom: 20px; }
 
         #search { 
             width: 100%; 
-            padding: 15px 45px 15px 15px; /* Extra padding on right for the X button */
+            padding: 15px 45px 15px 15px; 
             border: 2px solid #eee; 
             border-radius: 10px; 
             font-size: 16px; 
             outline: none; 
             transition: 0.3s;
-            box-sizing: border-box; /* FIX: Prevents going outside on the right */
+            box-sizing: border-box; 
         }
         #search:focus { border-color: var(--primary); }
 
-        /* The "X" Clear Button */
         .clear-btn {
             position: absolute;
             right: 15px;
@@ -55,7 +62,7 @@
             line-height: 18px;
             cursor: pointer;
             font-weight: bold;
-            display: none; /* Hidden by default */
+            display: none; 
             font-size: 12px;
             user-select: none;
         }
@@ -112,7 +119,7 @@
     const yourWhatsAppNumber = "919722999223"; 
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTzSeE0tPryPKE8gOSPKUhSxupwT-v85JTQLklrg8dXAAcQ4qbAW_iCV7Krjgs5LoH0QKP3qyqIsgj-/pub?output=csv';
 
-    let perfumeData = [];
+    let searchTimer;
 
     // 1. Fetch data from Google Sheets
     fetch(sheetUrl)
@@ -146,14 +153,23 @@
             });
         });
 
-    // 2. Filter logic (Shows only when typing)
+    // 2. Filter logic with Analytics Tracking
     function filter() {
         let input = document.getElementById('search').value.toLowerCase().trim();
         let items = document.getElementsByClassName('item');
         let clearBtn = document.getElementById('clearBtn');
 
-        // Show/Hide Clear Button
         clearBtn.style.display = (input.length > 0) ? "block" : "none";
+
+        // ANALYTICS: Track what people search for after 1 second of no typing
+        clearTimeout(searchTimer);
+        if (input.length >= 3) {
+            searchTimer = setTimeout(() => {
+                gtag('event', 'search_perfume', {
+                    'search_term': input
+                });
+            }, 1000);
+        }
         
         for (let i = 0; i < items.length; i++) {
             let text = items[i].innerText.toLowerCase();
